@@ -17,6 +17,9 @@ public class AgendamentoService {
     @Autowired
     AgendamentoRepository agendamentoRepository;
 
+    @Autowired
+    Cpf cpfService;
+
     public Page<Agendamento> listarAgendamentos(Pageable pageable){
         Page<Agendamento> page = agendamentoRepository.findAll(pageable);
         if (page == null || page.isEmpty()){
@@ -28,7 +31,7 @@ public class AgendamentoService {
     public Agendamento consultarAgendamentoPorCpf(Long cpf){
         Optional<Agendamento> agendamento = agendamentoRepository.findByCpf(cpf);
         if (agendamento == null || agendamento.isEmpty()){
-            throw new RuntimeException("Agendamento com cpf "+cpf+" não encontrado.");
+            throw new RuntimeException("Agendamento com cpf "+cpfService.obterComMascara(cpf)+" não encontrado.");
         }
         return agendamento.get();
     }
@@ -42,9 +45,12 @@ public class AgendamentoService {
     }
 
     public Agendamento agendar(Agendamento agendamento){
+        if (!cpfService.validar(agendamento.getCpf())){
+            throw new RuntimeException("Cpf inválido.");
+        }
         Optional<Agendamento> agendamentoTemp = agendamentoRepository.findByCpf(agendamento.getCpf());
         if (agendamentoTemp != null || !agendamentoTemp.isEmpty()){
-            throw new RuntimeException("Pessoa com o cpf "+agendamento.getCpf()+" já realizou o agendamento.");
+            throw new RuntimeException("Pessoa com o cpf "+cpfService.obterComMascara(agendamento.getCpf())+" já realizou o agendamento.");
         }
         return agendamentoRepository.save(agendamento);
     }
@@ -56,7 +62,7 @@ public class AgendamentoService {
     public Agendamento cancelarAgendamentoPorCpf(Long cpf){
         Optional<Agendamento> agendamento = agendamentoRepository.findByCpf(cpf);
         if (agendamento == null || agendamento.isEmpty()){
-            throw new RuntimeException("Agendamento com cpf "+cpf+" não encontrado.");
+            throw new RuntimeException("Agendamento com cpf "+cpfService.obterComMascara(cpf)+" não encontrado.");
         }
         agendamentoRepository.delete(agendamento.get());
         return agendamento.get();
