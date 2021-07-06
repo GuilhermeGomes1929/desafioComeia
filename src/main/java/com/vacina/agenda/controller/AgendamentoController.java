@@ -3,6 +3,8 @@ package com.vacina.agenda.controller;
 import com.vacina.agenda.model.Agendamento;
 import com.vacina.agenda.repository.AgendamentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,8 +17,8 @@ public class AgendamentoController {
     AgendamentoRepository repository;
 
     @GetMapping("/")
-    public List<Agendamento> listarAgendamentos(){
-        return repository.findAll();
+    public Page<Agendamento> listarAgendamentos(Pageable pageable){
+        return repository.findAll(pageable);
     }
 
     @GetMapping("/consultar")
