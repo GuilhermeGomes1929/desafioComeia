@@ -3,6 +3,7 @@ package com.vacina.agenda.configs;
 import com.vacina.agenda.model.Usuario;
 import com.vacina.agenda.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,6 +21,8 @@ public class UsuarioConfig implements UserDetailsService {
         if (usuario == null){
             throw new UsernameNotFoundException("Usuário não encontrado.");
         }
-        return usuario;
+        UserDetails user = User.withUsername(usuario.getUsername()).password(usuario.getPassword()).disabled(false)
+                .authorities(usuario.getAuthorities()).build();
+        return user;
     }
 }

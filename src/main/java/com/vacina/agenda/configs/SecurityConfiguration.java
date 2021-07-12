@@ -50,8 +50,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/login","/registrar","/consultar").permitAll()
-                .anyRequest().authenticated()
+                .antMatchers("/login","/registrar","/consultar/nome", "/consultar/cpf").permitAll()
+                .antMatchers("/", "/cancelar", "/editar").hasAuthority("ADMIN")
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and().sessionManagement()
